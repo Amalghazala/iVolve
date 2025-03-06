@@ -48,6 +48,15 @@ Lab 8: Ansible Vault
 
 ![Image](https://github.com/user-attachments/assets/7b9a1055-1833-4180-8b7c-c8e8bd92d8a9)
 
+8. Checking User Privileges:
+
+   To ensure the user ivolve_user has the correct privileges, run:
+
+   ```sh
+   SHOW GRANTS FOR 'ivolve_user'@'localhost';
+
+![Image](https://github.com/user-attachments/assets/2a954f1c-327c-4ed0-b928-8650de27110c)
+
 
 
 
