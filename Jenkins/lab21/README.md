@@ -45,17 +45,17 @@
      * Assign user2 to the Read-Only role.
      * Click Save.
        
-    ![Image](https://github.com/user-attachments/assets/0a71c84e-a28e-4be6-adc0-2c4cedca4df3)
+  ![Image](https://github.com/user-attachments/assets/0a71c84e-a28e-4be6-adc0-2c4cedca4df3)
 
 ### 5. Test User Permissions:
    *  Log out from Jenkins.
    *  Log in as user1 → Should have full access.
      
-     ![Image](https://github.com/user-attachments/assets/ea07afc6-7d07-493e-b0a5-e9dc6bbb182c)
+  ![Image](https://github.com/user-attachments/assets/ea07afc6-7d07-493e-b0a5-e9dc6bbb182c)
   
    *  Log in as user2 → Should only have read-only access.
      
-     ![Image](https://github.com/user-attachments/assets/2c312156-0ce2-42df-ac5b-46a186d0fde4)
+   ![Image](https://github.com/user-attachments/assets/2c312156-0ce2-42df-ac5b-46a186d0fde4)
      
 
 
