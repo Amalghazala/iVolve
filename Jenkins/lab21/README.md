@@ -1,18 +1,18 @@
 # Lab 21: Role-based Authorization in Jenkins
 ---
-1. Install the Role Strategy Plugin:
+### 1. Install the Role Strategy Plugin:
    * Log in to Jenkins
    * Go to "Manage Jenkins" → "Manage Plugins"
      * Go to the Available tab.
      * Search for "Role-based Authorization Strategy".
      * Select it and click Install without restart.
 
-2. Enable Role-based Strategy
+### 2. Enable Role-based Strategy
    * Go to "Manage Jenkins" → "Security"
      * Under Authorization, select Role-Based Strategy.
      * Click Save.
 
-3. Create Users:
+### 3. Create Users:
    * Create user1 (Admin)
    * Go to Manage Jenkins → Manage Users → Create User.
      * Username: user1
@@ -28,7 +28,7 @@
        
    ![Image](https://github.com/user-attachments/assets/effa248c-5978-4a38-b7ed-f0c4f257b545)
 
-4. Configure Roles:
+### 4. Configure Roles:
    * Go to Manage Jenkins → Manage and Assign Roles.
    * Define Roles:
      * Go to Manage Roles → Click Add Role.
@@ -45,9 +45,9 @@
      * Assign user2 to the Read-Only role.
      * Click Save.
        
-  ![Image](https://github.com/user-attachments/assets/0a71c84e-a28e-4be6-adc0-2c4cedca4df3)
+    ![Image](https://github.com/user-attachments/assets/0a71c84e-a28e-4be6-adc0-2c4cedca4df3)
 
-5. Test User Permissions:
+### 5. Test User Permissions:
    *  Log out from Jenkins.
    *  Log in as user1 → Should have full access.
      
