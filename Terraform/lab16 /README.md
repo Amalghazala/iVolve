@@ -1,26 +1,63 @@
-![Image](https://github.com/user-attachments/assets/4f8d58be-b97d-49b1-ba6e-491f36e5b797)
+# Lab 16 : Multi-Tier Application Deployment with Terraform
+---
+## Objective
 
-![Image](https://github.com/user-attachments/assets/3de86821-9b9b-4bf2-abb4-a818a21497ff)
+This lab demonstrates how to deploy a multi-tier application using Terraform on AWS Cloud9. It involves:
+   * Setting up an AWS Cloud9 development environment.
+   * Creating a VPC manually.
+   * Making Terraform manage the VPC.
+   * Implementing the architecture as shown in the diagram.
+   * Using a local provisioner to store the EC2 public IP in a file ec2-ip.txt.
 
-![Image](https://github.com/user-attachments/assets/81de415a-e607-4001-94b3-63a1daaaf297)
+---
+1. Set Up AWS Cloud9 Environment
+   * Log in to the AWS Console and create a Cloud9 environment.
+   * Create the vpc manually
 
-![Image](https://github.com/user-attachments/assets/ea0db98d-8adf-4397-85b2-e11dd9abbd4a)
+2. Install Terraform
+   ```sh
+   sudo yum install -y yum-utils
+   sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+   sudo yum install -y terraform
+   terraform version
+   ```
+   ![Image](https://github.com/user-attachments/assets/4f8d58be-b97d-49b1-ba6e-491f36e5b797)
 
-```sh
-provider "aws" {
-  region = "us-east-1"
-}
+3. Write Terraform Configuration:
+   ```sh
+    provider "aws" {
+      region = "us-east-1"
+    }
+    resource "aws_vpc" "MyTerraformVPC" {
+      cidr_block = "10.0.0.0/16"
+      tags = {
+        Name = "MyTerraformVPC"
+     }
+   }
+    ```
+* Initialize Terraform
 
-resource "aws_vpc" "MyTerraformVPC" {
-  cidr_block = "10.0.0.0/16"
+  This initializes the Terraform working directory and downloads necessary provider plugins
 
-  tags = {
-    Name = "MyTerraformVPC"
-  }
-}
+   ```sh
+   terraform init
+   ```
 
-# create Public Subnet
-resource "aws_subnet" "public_subnet" {
+![419704779-81de415a-e607-4001-94b3-63a1daaaf297m](https://github.com/user-attachments/assets/a043f4af-86d1-45cf-8b0d-3f69bb6bf045)
+
+* Import the Existing VPC
+  ```sh
+  terraform import aws-vpc.MyTerraformVPC vpc-008bfc94fbec2adc7
+  ```
+
+  ![Image](https://github.com/user-attachments/assets/3de86821-9b9b-4bf2-abb4-a818a21497ff)
+
+
+
+* Create Public and Private Subnets:
+  
+  ```sh
+  resource "aws_subnet" "public_subnet" {
   vpc_id                  = aws_vpc.MyTerraformVPC.id
   cidr_block              = "10.0.1.0/24"
   map_public_ip_on_launch = true
@@ -29,38 +66,43 @@ resource "aws_subnet" "public_subnet" {
   tags = {
     Name = "TerraformPublicSubnet"
   }
-}
-
-# create Private Subnets at 2 AZs  
-resource "aws_subnet" "private_subnet_1" {
+  }
+  resource "aws_subnet" "private_subnet_1" {
   vpc_id            = aws_vpc.MyTerraformVPC.id
   cidr_block        = "10.0.2.0/24"
   availability_zone = "us-east-1a"
 
   tags = {
     Name = "TerraformPrivateSubnet1"
-
-resource "aws_subnet" "private_subnet_2" {
+  }
+  }
+  resource "aws_subnet" "private_subnet_2" {
   vpc_id            = aws_vpc.MyTerraformVPC.id
   cidr_block        = "10.0.3.0/24"
   availability_zone = "us-east-1b"
-
   tags = {
     Name = "TerraformPrivateSubnet2"
   }
-}
+  }
+  ```
 
-# create Internet Gateway
-resource "aws_internet_gateway" "gw" {
+
+* Create an Internet Gateway:
+  
+  ```sh
+  resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.MyTerraformVPC.id
 
   tags = {
     Name = "TerraformIGW"
   }
-}
+  }
+  ```
 
-# create Route Table for Public Subnet
-resource "aws_route_table" "public_rt" {
+* Create a Route Table for Public Subnet:
+  
+  ```sh
+  resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.MyTerraformVPC.id
 
   route {
@@ -71,19 +113,24 @@ resource "aws_route_table" "public_rt" {
   tags = {
     Name = "TerraformPublicRouteTable"
   }
-}
+  }
+  ```
 
-#  connect Public Subnet to Route Table
-resource "aws_route_table_association" "public_assoc" {
+* Associate the Route Table with the Public Subnet:
+  
+  ```sh
+  resource "aws_route_table_association" "public_assoc" {
   subnet_id      = aws_subnet.public_subnet.id
   route_table_id = aws_route_table.public_rt.id
-}
+  }
+  ```
 
-# create Security Group to EC2
-resource "aws_security_group" "web_sg" {
+* Security Group for EC2
+  
+  ```sh
+  resource "aws_security_group" "web_sg" {
   vpc_id = aws_vpc.MyTerraformVPC.id
 
-  #  Allow HTTP
   ingress {
     from_port   = 80
     to_port     = 80
@@ -91,7 +138,6 @@ resource "aws_security_group" "web_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  #  Allowـ SSH
   ingress {
     from_port   = 22
     to_port     = 22
@@ -109,10 +155,13 @@ resource "aws_security_group" "web_sg" {
   tags = {
     Name = "TerraformWebSG"
   }
-}
+  }
+  ```
 
-# create Security Group to RDS
-resource "aws_security_group" "rds_sg" {
+* Security Group for RDS
+
+  ```sh
+  resource "aws_security_group" "rds_sg" {
   vpc_id = aws_vpc.MyTerraformVPC.id
 
   ingress {
@@ -132,10 +181,12 @@ resource "aws_security_group" "rds_sg" {
   tags = {
     Name = "TerraformRDSSG"
   }
-}
+  }
+  ```
+* Create an EC2 Instance in the Public Subnet:
 
-# create EC2 Instance inside Public Subnet
-resource "aws_instance" "ec2_instance" {
+  ```sh
+  resource "aws_instance" "ec2_instance" {
   ami           = "ami-0c02fb55956c7d316"
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.public_subnet.id
@@ -148,20 +199,25 @@ resource "aws_instance" "ec2_instance" {
   provisioner "local-exec" {
     command = "echo ${self.public_ip} > ec2-ip.txt"
   }
-}
+  }
+  ```
+* Create RDS Subnet Group:
 
-# create RDS Subnet Group to cover 2AZs
-resource "aws_db_subnet_group" "rds_subnet_group" {
+  ```sh
+  resource "aws_db_subnet_group" "rds_subnet_group" {
   name       = "terraform-rds-subnet-group"
   subnet_ids = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
 
   tags = {
     Name = "TerraformRDSSubnetGroup"
   }
-}
+  }
+  ```
 
-# create RDS Instance inside Private Subnets
-resource "aws_db_instance" "rds_instance" {
+* Create an RDS Instance in the Private Subnets:
+
+  ```sh
+  resource "aws_db_instance" "rds_instance" {
   identifier         = "terraform-rds"
   engine            = "mysql"
   engine_version    = "8.0"
@@ -178,4 +234,25 @@ resource "aws_db_instance" "rds_instance" {
   tags = {
     Name = "TerraformRDS"
   }
-}
+  }
+  ```
+
+
+* Plan the Deployment
+   ```sh
+   terraform plan
+   ```
+This shows the execution plan and resources to be created.
+
+![Image](https://github.com/user-attachments/assets/ea0db98d-8adf-4397-85b2-e11dd9abbd4a)
+
+*  Apply the Terraform Configuration
+  ```sh
+terraform apply -auto-approve
+```
+* After deployment, the EC2 public IP is stored in ec2-ip.txt
+  
+
+
+
+
