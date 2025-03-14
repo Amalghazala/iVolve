@@ -1,4 +1,3 @@
-```sh
 provider "aws" {
   region = var.region
 }
@@ -79,4 +78,3 @@ output "web_server_public_ip" {
 output "app_server_private_ip" {
   value = aws_instance.app_server.private_ip
 }
-```
