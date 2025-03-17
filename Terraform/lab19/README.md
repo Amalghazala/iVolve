@@ -175,9 +175,9 @@ terraform apply -auto-approve
 terraform apply -auto-approve
 ```
 
-![Image](https://github.com/user-attachments/assets/552ead7a-7dea-40cc-9de3-27ad0f22f543)
-
 ![Image](https://github.com/user-attachments/assets/17c3daed-397a-4b36-b602-74dcc4fe86aa)
+
+![Image](https://github.com/user-attachments/assets/552ead7a-7dea-40cc-9de3-27ad0f22f543)
 
 ### Test Server Connectivity
 ```sh
