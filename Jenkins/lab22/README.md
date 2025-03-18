@@ -22,7 +22,7 @@
 - **Jenkins Credentials Created**:
   - **Username and Password** credential named `ubuntu`.
   - **SSH Username with Private Key** credential named `k8s-ssh`.
-  - 
+  
 ![Image](https://github.com/user-attachments/assets/fa9f3332-e489-49fc-8c66-1de02cf9681c)
 
 ## Steps to Automate the Deployment Pipeline
